@@ -10,11 +10,7 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3277037d-f562-4d9d-83b6-92ad3a561249" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TcpChatServer/ChatServer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TcpChatServer/ChatServer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TcpChatServer/ConnectedClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TcpChatServer/ConnectedClient.cs" afterDir="false" />
-    </list>
+    <list default="true" id="3277037d-f562-4d9d-83b6-92ad3a561249" name="변경" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -69,7 +65,7 @@
       <option name="presentableId" value="Default" />
       <updated>1777213690708</updated>
       <workItem from="1777213691539" duration="1208000" />
-      <workItem from="1777214973259" duration="396000" />
+      <workItem from="1777214973259" duration="743000" />
     </task>
     <servers />
   </component>

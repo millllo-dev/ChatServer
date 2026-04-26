@@ -70,8 +70,8 @@ public class ChatServer
                 // _clients.TryAdd(clientId, connectedClient); // true/false를 반환한다
                 _clients[clientId] = connectedClient;
                 
-                // 연결된 클라이언트 정보 출력
-                var endPoint = client.Client.RemoteEndPoint;
+                // 메세지 수신 시 브로드캐스팅을 위한 이벤트 연결
+                connectedClient.MessageReceived += OnMessageReceived;
                 
                 Console.WriteLine($"[정보] 현재 연결된 클라이언트 수 : {_clients.Count}");
                 
@@ -81,6 +81,30 @@ public class ChatServer
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+            }
+        }
+    }
+
+    // 메세지 브로드 캐스팅
+    // - 현재 접속되어 있는 모든 클라이언트한테 채팅 메시지 전달
+    private void OnMessageReceived(ConnectedClient sender, string message)
+    {
+        // 메세지 포맷 : [발신자 Id] : 메세지
+        string msg = $"[{sender.ClientId}] : {message}";
+        Console.WriteLine($"[브로드캐스트] {msg}");
+        
+        // 모든 클라이언트에게 메시지 브로드캐스팅 (비동기)
+        _ = Task.Run(() => BroadcastMessageAsync(msg));
+    }
+    
+    // 모든 클라이언트에게 메세지를 브로드캐스팅 (비동기)
+    private async Task BroadcastMessageAsync(string message)
+    {
+        foreach (var client in _clients)
+        {
+            if (client.Value.IsConnected)
+            {
+                await client.Value.SendMessageAsync(message);
             }
         }
     }

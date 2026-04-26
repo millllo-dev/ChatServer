@@ -32,6 +32,9 @@ public class ConnectedClient : IDisposable
     // 클라이언트 연결 여부 프로퍼티
     public bool IsConnected => !_isDisposed && _client.Connected;
     
+    // 메세지 수신 이벤트
+    public event Action<ConnectedClient, string> MessageReceived;
+    
     // 생성자
     public ConnectedClient(TcpClient client)
     {
@@ -60,6 +63,7 @@ public class ConnectedClient : IDisposable
             {
                 // StreamReader에 넘어오는 데이터가 NULL이면 클라이언트가 끊겼다는 의미
                 // 읽기 파이프라인에서 한 줄씩 읽는다(비동기)
+                // - stream으로부터 데이터가 들어올 때까지 비동기로 기다린다
                 string? message = await _reader.ReadLineAsync();
                 
                 // 연결이 끊어지면 NULL 반환
@@ -70,6 +74,8 @@ public class ConnectedClient : IDisposable
                 }
 
                 Console.WriteLine($"[수신] {_clientId} : {message}");
+                
+                MessageReceived?.Invoke(this, message);
             }
         }
         catch (Exception e)
@@ -86,6 +92,24 @@ public class ConnectedClient : IDisposable
         }
     }
 
+    public async Task SendMessageAsync(string message)
+    {
+        if (_isDisposed || !IsConnected)
+        {
+            Console.WriteLine("[전송 실패] 클라이언트 전송 불가");
+            return;
+        }
+
+        try
+        {
+            await _writer.WriteAsync(message);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"[전송 오류] 메세지 전송 실패 : {e.Message}");
+        }
+    }
+
     // Dispose 메서드
     // 해제할 리소스를 명시
     public void Dispose()
@@ -95,7 +119,10 @@ public class ConnectedClient : IDisposable
         _isDisposed = true;
         
         // Close() 메서드 내부적으로 dispose 메서드를 자동으로 호출
-        // _stream.Close();
+        
+        _reader.Dispose();
+        _writer.Dispose();
+        
         _stream.Dispose();
         _client.Dispose();
     }
