@@ -74,6 +74,9 @@ public class ChatServer
                 var endPoint = client.Client.RemoteEndPoint;
                 
                 Console.WriteLine($"[정보] 현재 연결된 클라이언트 수 : {_clients.Count}");
+                
+                // 클라이언트로부터 메시지 수신 시작(비동기)
+                _ = Task.Run(() => connectedClient.ReceiveMessageAsync());
             }
             catch (Exception e)
             {

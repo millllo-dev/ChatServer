@@ -15,6 +15,12 @@ public class ConnectedClient : IDisposable
     // -  각 노드 간(클라이언트-서버) 통신할 수 있는 하나의 통로
     private readonly NetworkStream _stream;
     
+    // 스트림 - 읽기 전용 (수신)
+    private readonly StreamReader _reader;
+    
+    // 스트림 - 쓰기 전용 (송신)
+    private readonly StreamWriter _writer;
+    
     // 클라이언트 ID
     private readonly string _clientId;
     
@@ -31,13 +37,56 @@ public class ConnectedClient : IDisposable
     {
         _client = client;
         _stream = client.GetStream();
-        // remote endpoint IP + port number로 clientID 설정 (null일 경우 난수로 설정)
+        
+        // 스트림 초기화 (UTF-8 인코딩)
+        // - 데이터를 주고 받을 때 UTF-8 형식으로 주고받는다는 의미
+        // reader stream을 생성하면 내부적으로 스트림 파이프라인
+        _reader = new StreamReader(_stream, System.Text.Encoding.UTF8);
+        // AutoFlush - Writer Stream에 데이터를 전달하면 바로 전달한다
+        _writer = new StreamWriter(_stream, System.Text.Encoding.UTF8) { AutoFlush = true};
+        
         _clientId = _client.Client.RemoteEndPoint?.ToString() ?? Guid.NewGuid().ToString();
         _isDisposed = false;
         
         Console.WriteLine($"[연결] 클라이언트가 연결되었습니다 : {_clientId}");
     }
+    
+    // 비동기 메시지 수신
+    public async Task ReceiveMessageAsync()
+    {
+        try
+        {
+            while (!_isDisposed && IsConnected)
+            {
+                // StreamReader에 넘어오는 데이터가 NULL이면 클라이언트가 끊겼다는 의미
+                // 읽기 파이프라인에서 한 줄씩 읽는다(비동기)
+                string? message = await _reader.ReadLineAsync();
+                
+                // 연결이 끊어지면 NULL 반환
+                if (message == null)
+                {
+                    Console.WriteLine($"[연결 종료] {_clientId}");
+                    break;
+                }
 
+                Console.WriteLine($"[수신] {_clientId} : {message}");
+            }
+        }
+        catch (Exception e)
+        {
+            // 연결이 끊기지 않았을 때만 에러 메세지 출력
+            if (!_isDisposed)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        finally
+        {
+            Dispose();
+        }
+    }
+
+    // Dispose 메서드
     // 해제할 리소스를 명시
     public void Dispose()
     {
