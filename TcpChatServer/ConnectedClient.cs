@@ -1,4 +1,5 @@
 using System.Net.Sockets;
+using System.Text;
 
 namespace TcpChatServer;
 
@@ -44,9 +45,9 @@ public class ConnectedClient : IDisposable
         // 스트림 초기화 (UTF-8 인코딩)
         // - 데이터를 주고 받을 때 UTF-8 형식으로 주고받는다는 의미
         // reader stream을 생성하면 내부적으로 스트림 파이프라인
-        _reader = new StreamReader(_stream, System.Text.Encoding.UTF8);
+        _reader = new StreamReader(_stream, Encoding.UTF8);
         // AutoFlush - Writer Stream에 데이터를 전달하면 바로 전달한다
-        _writer = new StreamWriter(_stream, System.Text.Encoding.UTF8) { AutoFlush = true};
+        _writer = new StreamWriter(_stream, new UTF8Encoding(false)) { AutoFlush = true};
         
         _clientId = _client.Client.RemoteEndPoint?.ToString() ?? Guid.NewGuid().ToString();
         _isDisposed = false;
