@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpChatServer", "TcpChatServer\TcpChatServer.csproj", "{95C9C44B-0EB6-44AA-8FB0-34035861E2AB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpChatClient", "TcpChatClient\TcpChatClient.csproj", "{F2DA12FF-D58C-4353-A53C-B443C55E614E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{95C9C44B-0EB6-44AA-8FB0-34035861E2AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95C9C44B-0EB6-44AA-8FB0-34035861E2AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95C9C44B-0EB6-44AA-8FB0-34035861E2AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2DA12FF-D58C-4353-A53C-B443C55E614E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2DA12FF-D58C-4353-A53C-B443C55E614E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2DA12FF-D58C-4353-A53C-B443C55E614E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2DA12FF-D58C-4353-A53C-B443C55E614E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

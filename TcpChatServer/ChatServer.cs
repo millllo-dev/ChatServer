@@ -49,6 +49,20 @@ public class ChatServer
         _ = Task.Run(AcceptClientAsync);
     }
     
+    public void Stop()
+    {
+        if (!_isRunning)
+        {
+            Console.WriteLine("서버가 이미 종료되었습니다.");
+            return;
+        }
+
+        _isRunning = false;
+        _listener?.Stop();
+        
+        Console.WriteLine("서버가 중지되었습니다.");
+    }
+    
     // 클라이언트 연결 (비동기)
     // - 비동기 메서드의 경우 접미사로 Async를 붙여주는 것이 관례
     private async Task AcceptClientAsync()
@@ -72,7 +86,7 @@ public class ChatServer
                 
                 // 메세지 수신 시 브로드캐스팅을 위한 이벤트 연결
                 connectedClient.MessageReceived += OnMessageReceived;
-                
+                connectedClient.Disconnected += OnClientDisconnected;
                 Console.WriteLine($"[정보] 현재 연결된 클라이언트 수 : {_clients.Count}");
                 
                 // 클라이언트로부터 메시지 수신 시작(비동기)
@@ -82,6 +96,18 @@ public class ChatServer
             {
                 Console.WriteLine(e.Message);
             }
+        }
+    }
+
+    private void OnClientDisconnected(string clientId)
+    {
+        if (_clients.TryRemove(clientId, out var client))
+        {
+            client.MessageReceived -= OnMessageReceived;
+            client.Disconnected -= OnClientDisconnected;
+            
+            Console.WriteLine($"[연결종료] 클라이언트 {clientId}가 연결이 종료되었습니다");
+            Console.WriteLine($"[정보] 현재 연결된 클라이언트 수 : {_clients.Count}");
         }
     }
 
@@ -109,17 +135,4 @@ public class ChatServer
         }
     }
 
-    public void Stop()
-    {
-        if (!_isRunning)
-        {
-            Console.WriteLine("서버가 이미 종료되었습니다.");
-            return;
-        }
-
-        _isRunning = false;
-        _listener?.Stop();
-        
-        Console.WriteLine("서버가 중지되었습니다.");
-    }
 }

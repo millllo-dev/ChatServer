@@ -36,6 +36,9 @@ public class ConnectedClient : IDisposable
     // 메세지 수신 이벤트
     public event Action<ConnectedClient, string> MessageReceived;
     
+    // 연결 종료 이벤트
+    public event Action<string> Disconnected;
+    
     // 생성자
     public ConnectedClient(TcpClient client)
     {
@@ -103,7 +106,7 @@ public class ConnectedClient : IDisposable
 
         try
         {
-            await _writer.WriteAsync(message);
+            await _writer.WriteLineAsync(message);
         }
         catch (Exception e)
         {
@@ -118,6 +121,9 @@ public class ConnectedClient : IDisposable
         if (_isDisposed) return;
 
         _isDisposed = true;
+        
+        // 연결 종료 이벤트 발생
+        Disconnected.Invoke(_clientId);
         
         // Close() 메서드 내부적으로 dispose 메서드를 자동으로 호출
         
